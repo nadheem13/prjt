@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Heritage Hub{% endblock %}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 
+                            500: '#e67e22', 
+                            600: '#d35400', 
+                            700: '#a04000',
+                            900: '#0f172a' 
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-[#0f172a] text-slate-100 font-sans min-h-screen flex flex-col relative selection:bg-brand-500 selection:text-white">
+
+    <canvas id="global-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 opacity-60"></canvas>
+
+    <div class="relative z-10 flex flex-col min-h-screen">
+        
+        <nav class="glass sticky top-0 z-50 py-2">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
+                    <a href="{% url 'home' %}" class="flex items-center gap-3 group">
+                        <div class="bg-brand-600 text-white p-2 rounded-xl group-hover:rotate-12 transition-transform duration-300 shadow-lg shadow-brand-600/20">
+                            <i class="fa-solid fa-hammer text-xl"></i>
+                        </div>
+                        <span class="font-bold text-2xl tracking-tighter text-white">Heritage Hub</span>
+                    </a>
+
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="{% url 'skill_list' %}" class="text-sm font-semibold text-slate-400 hover:text-white transition">Explore</a>
+                        <a href="{% url 'ai_advisor' %}" class="text-sm font-semibold flex items-center gap-2 text-slate-400 hover:text-brand-500 transition">
+                            <i class="fa-solid fa-sparkles text-orange-400"></i> Ask AI
+                        </a>
+                        
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'chat_list' %}" class="text-sm font-semibold text-slate-400 hover:text-white transition">Messages</a>
+                            <a href="{% url 'request_list' %}" class="text-sm font-semibold text-slate-400 hover:text-white transition">Sessions</a>
+                            <a href="{% url 'dashboard' %}" class="text-sm font-semibold text-slate-400 hover:text-white transition">Dashboard</a>
+                            
+                            <form action="{% url 'logout' %}" method="post" class="ml-4">
+                                {% csrf_token %}
+                                <button type="submit" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-red-500 transition border border-slate-700" title="Logout">
+                                    <i class="fa-solid fa-right-from-bracket"></i>
+                                </button>
+                            </form>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="text-sm font-bold text-white hover:text-brand-500 transition">Login</a>
+                            <a href="{% url 'register' %}" class="bg-white text-brand-900 px-6 py-2.5 rounded-full text-sm font-extrabold hover:bg-slate-200 transition shadow-xl shadow-white/5">
+                                Join Community
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-grow animate-fade-in py-12">
+            {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 mb-8">
+                {% for message in messages %}
+                <div class="p-4 rounded-2xl glass border-l-4 {% if message.tags == 'error' %}border-red-500 text-red-100{% else %}border-brand-500 text-slate-100{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="bg-[#0f172a] border-t border-slate-800/50 py-10">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <p class="text-slate-500 text-sm font-medium tracking-wide">© {% now "Y" %} Heritage Hub • Preserving Heritage & Connecting Generations</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

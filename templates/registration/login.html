@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="glass p-10 md:p-16 rounded-[3rem] shadow-2xl animate-fade-in border-white/5 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-32 h-32 bg-brand-600/10 blur-3xl -z-10"></div>
+        
+        <div class="text-center mb-16">
+            <div class="flex justify-center gap-2 mb-6">
+                <div class="brand-badge text-white">
+                    <i class="fa-solid fa-lock"></i> Member Access
+                </div>
+            </div>
+            <h2 class="text-4xl md:text-5xl font-black text-white mb-6 tracking-tighter">Welcome Back</h2>
+            <p class="text-slate-500 font-bold leading-relaxed max-w-sm mx-auto">Sign in to continue preserving traditions and connecting with heritage.</p>
+        </div>
+
+        <form method="post" class="space-y-8">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="p-6 rounded-[2rem] bg-red-500/10 text-red-400 text-sm font-black border border-red-500/20 text-center animate-pulse">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            
+            {% for field in form %}
+            <div class="space-y-3">
+                <label for="{{ field.id_for_label }}" class="block text-xs font-black text-slate-500 uppercase tracking-widest pl-2">{{ field.label }}</label>
+                <div class="relative group">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-brand-600/20 to-transparent rounded-2xl opacity-0 group-focus-within:opacity-100 transition duration-500"></div>
+                    <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" class="relative w-full px-6 py-5 bg-slate-900 border-2 border-white/5 rounded-3xl text-white font-bold outline-none focus:ring-4 focus:ring-brand-500/10 focus:border-brand-600 transition" {% if field.field.required %}required{% endif %}>
+                </div>
+                {% if field.errors %}
+                <p class="text-[10px] text-red-500 font-black uppercase tracking-tighter mt-2 pl-2">{{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="w-full bg-white text-slate-950 py-6 rounded-3xl font-black text-xl hover:scale-[1.03] transition-all shadow-[0_20px_50px_rgba(255,255,255,0.1)] active:scale-95 mt-10">
+                Sign In
+            </button>
+        </form>
+
+        <div class="mt-12 pt-10 border-t border-white/5 text-center">
+            <p class="text-slate-500 font-bold">New to Heritage Hub? <a href="{% url 'register' %}" class="text-brand-500 hover:text-brand-400 transition-colors">Create account</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

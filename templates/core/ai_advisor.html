@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="glass p-10 md:p-16 rounded-[3rem] shadow-2xl animate-fade-in border-white/5 relative overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[2px] bg-gradient-to-r from-transparent via-brand-600 to-transparent"></div>
+        
+        <div class="text-center mb-16">
+            <div class="flex items-center justify-center gap-2 mb-6">
+                <div class="brand-badge !py-1 !px-3 !text-[9px] !tracking-widest">
+                    <i class="fa-solid fa-sparkles text-orange-400"></i> Powered by Heritage Hub AI
+                </div>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter">AI Skill <span class="text-brand-500">Advisor</span></h1>
+            <p class="text-slate-400 max-w-2xl mx-auto text-lg font-medium leading-relaxed">Your intelligent companion for discovering the tools, techniques, and traditions that define our heritage.</p>
+        </div>
+        
+        <div id="chat-box" class="h-[600px] overflow-y-auto mb-10 p-10 space-y-6 bg-slate-900/50 rounded-[2.5rem] border border-white/5 scroll-smooth custom-scrollbar">
+            <div class="chat-bubble chat-ai !bg-slate-800 !text-slate-200 !rounded-3xl border border-white/5 shadow-xl">
+                <p class="font-medium">Welcome to the Hub, I am your Heritage Advisor. How can I help you explore traditional skills today? You might ask:</p>
+                <ul class="mt-4 space-y-2 text-sm text-slate-400 list-disc list-inside font-bold">
+                    <li>"How do I begin learning blacksmithing?"</li>
+                    <li>"What are the essential tools for traditional carpentry?"</li>
+                    <li>"Tell me about the history of hand-weaver skills."</li>
+                </ul>
+            </div>
+        </div>
+
+        <form id="chat-form" class="flex gap-4 p-2 bg-slate-900 rounded-[2rem] border border-white/10 shadow-2xl focus-within:border-brand-600/50 transition-colors">
+            {% csrf_token %}
+            <input type="text" id="user-input" class="flex-grow bg-transparent border-none rounded-2xl px-8 py-6 text-white placeholder-slate-600 outline-none font-bold text-lg" placeholder="Ask your question..." required>
+            <button type="submit" class="bg-brand-600 text-white w-16 h-16 rounded-2xl font-black hover:bg-brand-500 transition shadow-2xl flex items-center justify-center group active:scale-90">
+                <i class="fa-solid fa-paper-plane text-xl group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const chatForm = document.getElementById('chat-form');
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+
+    function appendMessage(text, type) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `chat-bubble chat-${type} animate-fade-in !rounded-3xl shadow-xl transition-all`;
+        if(type === 'ai') {
+            msgDiv.classList.add('!bg-slate-800', '!text-slate-200', 'border', 'border-white/5');
+        } else {
+            msgDiv.classList.add('!bg-brand-600', '!text-white', 'shadow-brand-600/20');
+        }
+        msgDiv.innerHTML = `<p class="font-medium leading-relaxed">${text}</p>`;
+        chatBox.appendChild(msgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const message = userInput.value;
+        if (!message) return;
+
+        appendMessage(message, 'user');
+        userInput.value = '';
+
+        // Added dynamic loading bubble
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'chat-bubble chat-ai !bg-slate-800 !text-slate-500 animate-pulse !rounded-3xl border border-white/5';
+        loadingDiv.innerHTML = '<p class="text-sm font-bold flex items-center gap-2"><i class="fa-solid fa-circle-notch fa-spin"></i> Advisor is processing tradition...</p>';
+        chatBox.appendChild(loadingDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+            const formData = new FormData();
+            formData.append('message', message);
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+            const response = await fetch('', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            chatBox.removeChild(loadingDiv); // Remove loading
+
+            if (data.response) {
+                appendMessage(data.response, 'ai');
+            } else {
+                appendMessage("Forgive me, my knowledge of that tradition is currently limited.", 'ai');
+            }
+        } catch (error) {
+            chatBox.removeChild(loadingDiv);
+            console.error('Error:', error);
+            appendMessage("The connection to the archive was lost. Please try again.", 'ai');
+        }
+    });
+</script>
+{% endblock %}

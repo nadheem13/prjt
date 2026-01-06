@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="glass p-10 md:p-16 rounded-[3rem] shadow-2xl animate-fade-in border-white/5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-48 h-48 bg-brand-600/10 blur-[80px] -z-10"></div>
+        
+        <div class="text-center mb-16">
+            <div class="flex justify-center gap-2 mb-6">
+                <div class="brand-badge text-white">
+                    <i class="fa-solid fa-feather-pointed"></i> Curator Studio
+                </div>
+            </div>
+            <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter">Share Your Expertise</h2>
+            <p class="text-slate-500 font-bold leading-relaxed max-w-sm mx-auto">Help the younger generation discover the value and soul of traditional craft.</p>
+        </div>
+
+        <form method="post" class="space-y-10">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="space-y-3">
+                <label for="{{ field.id_for_label }}" class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] pl-3">
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="text-brand-500 font-black">*</span>{% endif %}
+                </label>
+                <div class="relative group">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-brand-600/30 to-transparent rounded-2xl opacity-0 group-focus-within:opacity-100 transition duration-500"></div>
+                    <div class="relative">
+                        {{ field }}
+                    </div>
+                </div>
+                {% if field.errors %}
+                <p class="text-[10px] text-red-500 font-black uppercase tracking-tighter mt-2 pl-3">{{ field.errors.0 }}</p>
+                {% endif %}
+                {% if field.help_text %}
+                    <p class="text-[10px] text-slate-600 font-black uppercase tracking-widest mt-2 pl-3 opacity-60">{{ field.help_text }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <button type="submit" class="w-full bg-white text-slate-950 py-6 rounded-3xl font-black text-xl hover:scale-[1.03] transition-all shadow-[0_20px_50px_rgba(255,255,255,0.1)] active:scale-95 mt-12 flex items-center justify-center gap-3 group">
+                Publish to Heritage Hub <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Heritage Hub Premium Input Overrides */
+input[type="text"], textarea, select {
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    background-color: #0f172a !important;
+    border: 2px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 1.5rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: white !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    outline: none !important;
+}
+input:focus, textarea:focus, select:focus {
+    border-color: #e67e22 !important;
+    background-color: #111827 !important;
+    box-shadow: 0 0 0 6px rgba(230, 126, 34, 0.08) !important;
+    transform: translateY(-2px);
+}
+textarea {
+    min-height: 180px;
+    line-height: 1.6;
+}
+</style>
+{% endblock %}

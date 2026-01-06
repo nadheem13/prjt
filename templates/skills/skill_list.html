@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-16">
+        <div>
+            <h1 class="text-5xl font-black text-white mb-2">Explore Skills</h1>
+            <p class="text-slate-500 font-bold uppercase tracking-widest text-sm">Discover heritage and expertise</p>
+        </div>
+        {% if user.is_authenticated and user.is_provider %}
+            <a href="{% url 'skill_create' %}" class="bg-brand-600 text-white px-8 py-4 rounded-full font-black hover:bg-brand-500 transition shadow-2xl shadow-brand-600/20 text-center">
+                + Offer a Skill
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        {% for skill in skills %}
+        <div class="glass p-8 rounded-[2rem] hover:shadow-[0_20px_50px_rgba(230,126,34,0.15)] transition-all duration-500 group border-white/5 relative overflow-hidden flex flex-col">
+            <div class="absolute top-0 left-0 w-1.5 h-full bg-brand-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            
+            <div class="flex items-center gap-2 mb-6">
+                <div class="brand-badge">
+                    <i class="fa-solid fa-hammer text-[10px]"></i> Heritage Hub
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold mb-3 text-white">{{ skill.title }}</h3>
+            <p class="text-slate-500 text-xs font-black mb-6 uppercase tracking-tighter flex items-center gap-2">
+                By {{ skill.provider.username }} <span class="text-slate-800">•</span> {{ skill.location }}
+            </p>
+            
+            <p class="text-slate-400 mb-8 line-clamp-3 leading-relaxed font-medium flex-grow">{{ skill.description }}</p>
+            
+            <div class="flex justify-between items-center mt-auto pt-8 border-t border-white/5">
+                <span class="text-[10px] font-black text-brand-500 uppercase tracking-widest bg-brand-500/10 px-3 py-1.5 rounded-lg border border-brand-500/20">
+                    {{ skill.availability }}
+                </span>
+                <a href="{% url 'skill_detail' skill.pk %}" class="font-black text-white hover:text-brand-500 transition flex items-center gap-2 group-hover:translate-x-1 duration-300">
+                    Explore <i class="fa-solid fa-arrow-right-long text-xs"></i>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full py-32 text-center glass rounded-[3rem] border-2 border-dashed border-slate-800">
+            <div class="mb-6 opacity-20">
+                <i class="fa-solid fa-wind text-7xl text-slate-400"></i>
+            </div>
+            <p class="text-xl text-slate-500 font-bold italic text-center">The hub is waiting for its first heritage skill.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

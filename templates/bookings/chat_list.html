@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="glass p-10 md:p-16 rounded-[3rem] shadow-2xl animate-fade-in border-white/5 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-2 h-full bg-brand-600"></div>
+        
+        <div class="flex items-center justify-between mb-12">
+            <div>
+                <h2 class="text-4xl font-black text-white mb-2 tracking-tighter">Conversations</h2>
+                <p class="text-slate-500 font-bold uppercase tracking-widest text-xs">Manage your legacy connections</p>
+            </div>
+            <div class="brand-badge !text-[9px]">
+                <i class="fa-solid fa-comments"></i> Heritage Hub Secure
+            </div>
+        </div>
+        
+        {% if chat_users %}
+            <div class="space-y-6">
+                {% for chat_user in chat_users %}
+                    <a href="{% url 'chat_detail' chat_user.id %}" class="flex items-center gap-8 p-6 rounded-[2rem] bg-slate-900/40 hover:bg-slate-900 transition-all duration-300 border border-white/5 hover:border-brand-500/30 group">
+                        <div class="relative">
+                            <div class="w-20 h-20 rounded-2xl bg-slate-800 flex items-center justify-center text-slate-500 font-black text-3xl group-hover:scale-105 transition-transform duration-500 shadow-inner">
+                                {{ chat_user.username|first|upper }}
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-4 border-slate-900 rounded-full"></div>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center justify-between mb-1">
+                                <p class="text-2xl font-black text-white group-hover:text-brand-500 transition-colors">{{ chat_user.username }}</p>
+                                <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest bg-slate-800 px-2 py-1 rounded-md">Active</span>
+                            </div>
+                            <p class="text-slate-500 text-xs font-black uppercase tracking-widest">{{ chat_user.is_provider|yesno:"Legacy Provider,Active Learner" }}</p>
+                        </div>
+                        <div class="text-slate-700 group-hover:text-brand-500 group-hover:translate-x-2 transition-all duration-500">
+                            <i class="fa-solid fa-arrow-right-long text-xl"></i>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-24 px-8 glass rounded-[3rem] border-2 border-dashed border-slate-800">
+                <div class="w-24 h-24 bg-slate-900 rounded-3xl flex items-center justify-center text-4xl text-slate-700 mx-auto mb-10 shadow-inner">
+                    <i class="fa-solid fa-message-slash"></i>
+                </div>
+                <h3 class="text-2xl font-black text-white mb-4 italic">No heritage connections yet...</h3>
+                <p class="text-slate-500 font-bold mb-12 max-w-sm mx-auto">Explore the listed skills and reach out to start preserving heritage together.</p>
+                <a href="{% url 'skill_list' %}" class="bg-white text-slate-950 px-10 py-4 rounded-full font-black hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-3 w-fit mx-auto">
+                    Explore Skills <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
