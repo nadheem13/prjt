@@ -58,9 +58,31 @@
                     </div>
 
                     {% if user.is_authenticated and user != skill.provider %}
-                    <button id="open-request-modal" class="w-full py-6 bg-white text-slate-950 rounded-3xl font-black text-xl hover:scale-[1.03] transition-all shadow-[0_20px_50px_rgba(255,255,255,0.1)] active:scale-95 flex items-center justify-center gap-3">
-                        <i class="fa-solid fa-sparkles text-brand-500"></i> Request Heritage Session
-                    </button>
+                        {% if existing_request %}
+                            <div class="space-y-4">
+                                {% if existing_request.status == 'PENDING' %}
+                                    <div class="w-full py-6 bg-slate-800 text-white rounded-3xl font-black text-xl flex items-center justify-center gap-3 border border-white/10">
+                                        <i class="fa-solid fa-paper-plane text-brand-500"></i> Heritage Proposal Sent
+                                    </div>
+                                {% elif existing_request.status == 'ACCEPTED' %}
+                                    <div class="w-full py-6 bg-emerald-500/10 text-emerald-500 rounded-3xl font-black text-xl flex items-center justify-center gap-3 border border-emerald-500/20">
+                                        <i class="fa-solid fa-circle-check"></i> Accepted
+                                    </div>
+                                {% elif existing_request.status == 'REJECTED' %}
+                                    <div class="w-full py-6 bg-rose-500/10 text-rose-500 rounded-3xl font-black text-xl flex items-center justify-center gap-3 border border-rose-500/20">
+                                        <i class="fa-solid fa-circle-xmark"></i> Request Rejected
+                                    </div>
+                                {% elif existing_request.status == 'COMPLETED' %}
+                                    <div class="w-full py-6 bg-brand-500/10 text-brand-500 rounded-3xl font-black text-xl flex items-center justify-center gap-3 border border-brand-500/20">
+                                        <i class="fa-solid fa-star"></i> Session Completed
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <button id="open-request-modal" class="w-full py-6 bg-white text-slate-950 rounded-3xl font-black text-xl hover:scale-[1.03] transition-all shadow-[0_20px_50px_rgba(255,255,255,0.1)] active:scale-95 flex items-center justify-center gap-3">
+                                <i class="fa-solid fa-sparkles text-brand-500"></i> Request Heritage Session
+                            </button>
+                        {% endif %}
                     {% endif %}
                 </div>
 

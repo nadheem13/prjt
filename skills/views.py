@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Skill
 from .forms import SkillForm
+from bookings.models import SessionRequest
 
 def skill_list(request):
     skills = Skill.objects.all().order_by('-created_at')
@@ -9,7 +10,13 @@ def skill_list(request):
 
 def skill_detail(request, pk):
     skill = get_object_or_404(Skill, pk=pk)
-    return render(request, 'skills/skill_detail.html', {'skill': skill})
+    existing_request = None
+    if request.user.is_authenticated:
+        existing_request = SessionRequest.objects.filter(learner=request.user, skill=skill).first()
+    return render(request, 'skills/skill_detail.html', {
+        'skill': skill,
+        'existing_request': existing_request
+    })
 
 @login_required
 def skill_create(request):
