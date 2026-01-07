@@ -14,7 +14,7 @@ def skill_detail(request, pk):
 @login_required
 def skill_create(request):
     if not request.user.is_provider:
-        return redirect('home') # Or show an error
+        return redirect('home')
     
     if request.method == 'POST':
         form = SkillForm(request.POST)
@@ -26,3 +26,21 @@ def skill_create(request):
     else:
         form = SkillForm()
     return render(request, 'skills/skill_form.html', {'form': form})
+
+@login_required
+def skill_edit(request, pk):
+    skill = get_object_or_404(Skill, pk=pk)
+    
+    # Permission check: Only the provider can edit their own skill
+    if skill.provider != request.user:
+        return redirect('skill_detail', pk=pk)
+    
+    if request.method == 'POST':
+        form = SkillForm(request.POST, instance=skill)
+        if form.is_valid():
+            form.save()
+            return redirect('skill_detail', pk=skill.pk)
+    else:
+        form = SkillForm(instance=skill)
+    
+    return render(request, 'skills/skill_form.html', {'form': form, 'skill': skill, 'is_edit': True})

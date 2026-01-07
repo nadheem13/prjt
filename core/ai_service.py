@@ -1,33 +1,34 @@
+import google.generativeai as genai
 import os
-import json
-# import openai # Uncomment if you install openai package
 
 def get_ai_response(user_message):
     """
-    Get response from OpenAI or Mock.
+    Get response from Google Gemini or Mock.
     """
-    api_key = os.environ.get('OPENAI_API_KEY')
+    api_key = os.environ.get('GOOGLE_API_KEY')
+    
+    system_instruction = (
+        "You are the Heritage Hub Advisor, a specialized AI assistant for the 'Heritage Hub' platform. "
+        "Heritage Hub is a community-driven marketplace where people share traditional and cultural skills. "
+        "Your purpose is to help users manage their heritage connections, understand the platform, and discuss cultural heritage skills.\n\n"
+        "STRICT CONSTRAINTS:\n"
+        "1. ONLY respond to queries related to Heritage Hub, heritage skills, culture, traditions, and community learning.\n"
+        "2. If a user asks a question outside of these topics (e.g., general programming, cooking unrelated to heritage, news, etc.), "
+        "politely refuse and explain that you can only assist with Heritage Hub and heritage-related matters.\n"
+        "3. Maintain a professional, warm, and community-focused tone."
+    )
     
     if api_key:
         try:
-            # Placeholder for actual OpenAI call
-            # client = openai.OpenAI(api_key=api_key)
-            # response = client.chat.completions.create(
-            #     model="gpt-3.5-turbo",
-            #     messages=[{"role": "user", "content": user_message}]
-            # )
-            # return response.choices[0].message.content
-            return f"OpenAI Mock (Key found but package not installed): You asked '{user_message}'. I suggest looking for carpentry skills."
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel(
+                model_name='gemini-2.5-flash',
+                system_instruction=system_instruction
+            )
+            response = model.generate_content(user_message)
+            return response.text
         except Exception as e:
             return f"Error connecting to AI: {str(e)}"
     else:
-        # Mock Response Logic
-        lower_msg = user_message.lower()
-        if "carpentry" in lower_msg:
-            return "Carpentry is a great skill! You'll need a hammer, wood, and a mentor. Check out our 'Woodworking 101' listings."
-        elif "knit" in lower_msg or "sew" in lower_msg:
-            return "For knitting or sewing, you need patience and good needles. We have several grandmothers offering lessons near you!"
-        elif "cook" in lower_msg:
-            return "Cooking traditional meals preserves culture. Search for 'Grandma's Recipes' in the skills section."
-        else:
-            return "That sounds interesting! Search our skills database or ask a Provider for more guidance."
+        # Fallback if no key is present
+        return "System Error: GOOGLE_API_KEY not found. Please set it in your environment."

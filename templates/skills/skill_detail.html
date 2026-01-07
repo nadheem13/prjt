@@ -21,7 +21,7 @@
                 <div class="flex flex-wrap gap-4">
                     {% if user.is_authenticated %}
                         {% if user == skill.provider %}
-                            <a href="#" class="bg-slate-800 text-white px-8 py-4 rounded-2xl font-black hover:bg-slate-700 transition border border-white/5">
+                            <a href="{% url 'skill_edit' skill.pk %}" class="bg-slate-800 text-white px-8 py-4 rounded-2xl font-black hover:bg-slate-700 transition border border-white/5">
                                 <i class="fa-solid fa-pen-to-square mr-2 text-brand-500"></i> Edit Skill
                             </a>
                         {% else %}

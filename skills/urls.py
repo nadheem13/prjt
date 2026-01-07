@@ -5,4 +5,5 @@ urlpatterns = [
     path('', views.skill_list, name='skill_list'),
     path('create/', views.skill_create, name='skill_create'),
     path('<int:pk>/', views.skill_detail, name='skill_detail'),
+    path('<int:pk>/edit/', views.skill_edit, name='skill_edit'),
 ]
